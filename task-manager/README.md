@@ -39,15 +39,15 @@ Task board with status columns and filters:
 ## Bonus Challenge Completed
 
 ### Beginner Challenge
-- Show task count summary: `Showing X of Y Tasks` (refer to `Image_1`)
-- Disable Add Task form submit button when required fields are missing (refer to `Image_2`)
+- Show task count summary: `Showing X of Y Tasks` (refer to `Image_MainPage`)
+- Disable Add Task form submit button when required fields are missing (refer to `Image_AddTask`)
 
 ### Medium Challenge
 - Persist tasks using Local Storage
-- Add `UPDATE_TASK` support on Edit Task page (refer to `Image_3`)
+- Add `UPDATE_TASK` support on Edit Task page (refer to `Image_UpdateTask`)
 
 ### Hard Challenge
-- Add a priority filter above the status filters (refer to `Image_1`)
+- Add a priority filter above the status filters (refer to `Image_MainPage`)
 
 ## AI Supported Area (GitHub Copilot)
 - Troubleshooting the project issues
@@ -55,6 +55,6 @@ Task board with status columns and filters:
 - generate of readMe
 
 ## Reference Images
-- Image_1: `./image/TaskListPage.png`
-- Image_2: `./image/AddTask_Incompleted.png`
-- Image_3: `./image/UpdateTask.png`
+- Image_MainPage: (./image/TaskListPage.png)
+- Image_AddTask: (./image/AddTask_Incompleted.png)
+- Image_UpdateTask: (./image/UpdateTask.png)
