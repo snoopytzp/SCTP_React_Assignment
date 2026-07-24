@@ -22,17 +22,7 @@ function FilterBar(){
     return (
         <div className={styles.filterBar}>
             <div className={styles.divider}>
-                {Status_filters.map((filterOption) => (
-                    <button
-                        key={filterOption.key}
-                        className={`${styles.filterPill} ${filter === filterOption.key ? styles.active : ""}`}
-                        onClick={() => setFilter(filterOption.key)}
-                    >
-                        {filterOption.label}
-                    </button>
-                ))}
-            </div>
-            <div className={styles.divider}>
+                Priority:
                 {Priority_filters.map((filterOption) => (
                     <button
                         key={filterOption.key}
@@ -42,6 +32,18 @@ function FilterBar(){
                         {filterOption.label}
                     </button>
                     ))}
+            </div>
+            <div className={styles.divider}>
+                Status:
+                {Status_filters.map((filterOption) => (
+                    <button
+                        key={filterOption.key}
+                        className={`${styles.filterPill} ${filter === filterOption.key ? styles.active : ""}`}
+                        onClick={() => setFilter(filterOption.key)}
+                    >
+                        {filterOption.label}
+                    </button>
+                ))}
             </div>
         </div>
     );
