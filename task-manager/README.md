@@ -1,16 +1,60 @@
-# React + Vite
+# Task Manager (React + Vite)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A simple task management web app built with React and Vite.
 
-Currently, two official plugins are available:
+## How to Install and Run the Project
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+### 1. Prerequisites
+- Node.js (LTS version recommended)
+- npm
 
-## React Compiler
+### 2. Install Dependencies
+```bash
+npm install
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 3. Run in Development Mode
+```bash
+npm run dev
+```
 
-## Expanding the ESLint configuration
+Then open the local URL shown in terminal (usually `http://localhost:5173`).
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 4. Build for Production
+```bash
+npm run build
+```
+
+### 5. Preview Production Build
+```bash
+npm run preview
+```
+
+## Main Feature Screenshot
+
+Task board with status columns and filters:
+
+![Task List Main Feature](./image/TaskListPage.png)
+
+## Bonus Challenge Completed
+
+### Beginner Challenge
+- Show task count summary: `Showing X of Y Tasks` (refer to `Image_1`)
+- Disable Add Task form submit button when required fields are missing (refer to `Image_2`)
+
+### Medium Challenge
+- Persist tasks using Local Storage
+- Add `UPDATE_TASK` support on Edit Task page (refer to `Image_3`)
+
+### Hard Challenge
+- Add a priority filter above the status filters (refer to `Image_1`)
+
+## AI Supported Area (GitHub Copilot)
+- Troubleshooting the project issues
+- Enhancing cosmetic layout for UI components (mainly module CSS updates)
+- generate of readMe
+
+## Reference Images
+- Image_1: `./image/TaskListPage.png`
+- Image_2: `./image/AddTask_Incompleted.png`
+- Image_3: `./image/UpdateTask.png`
