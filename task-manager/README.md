@@ -55,6 +55,6 @@ Task board with status columns and filters:
 - generate of readMe
 
 ## Reference Images
-- Image_MainPage: (./image/TaskListPage.png)
-- Image_AddTask: (./image/AddTask_Incompleted.png)
-- Image_UpdateTask: (./image/UpdateTask.png)
+- Image_MainPage:![Task List Main Page](./image/TaskListPage.png)
+- Image_AddTask: ![Add Task Feature](./image/AddTask_Incompleted.png)
+- Image_UpdateTask: ![Update Task Feature](./image/UpdateTask.png)
