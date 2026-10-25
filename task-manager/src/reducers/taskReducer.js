@@ -1,49 +1,16 @@
-const initialTasks = [
-    {   id: 1, 
-        title: 'Set up project repository', 
-        description: 'Initialise a Git repo, add a .gitignore, and push the first commit.',         
-        status: 'done',      
-        priority: 'high'
-    },
-    {   id: 2, 
-        title: 'Design database schema',       
-        description: 'Draft the ERD for the contacts and deals tables.',                            
-        status: 'done',        
-        priority: 'high'
-    },
-    {   id: 3, 
-        title: 'Build login page',             
-        description: 'Create a login form with email and password fields and basic validation.',     
-        status: 'in-progress', 
-        priority: 'high',
-    },
-    {   id: 4, 
-        title: 'Write unit tests for reducer',             
-        description: 'Cover ADD_TASK, DELETE_TASK, and SET_FILTER with at least two cases each.',     
-        status: 'todo', 
-        priority: 'medium',
-    },
-    {   id: 5, 
-        title: 'Update README',             
-        description: 'Add setup instructions, a screenshot, and a description of the tech stack.',     
-        status: 'todo', 
-        priority: 'low',
-    },
-    {   id: 6, 
-        title: 'Deploy to Vercel',             
-        description: 'Connect the GitHub repo to Vercel and configure environment variables.',     
-        status: 'todo', 
-        priority: 'medium',
-    },]
-
 export const initialState = {
-    tasks: initialTasks,
+    tasks: [],
     filter: 'all',
     priorityFilter: 'all',
 };
 
 export function taskReducer(state, action) {
   switch (action.type) {
+    case "SET_TASKS":
+        return {
+            ...state,
+            tasks: action.payload,
+        };
     case "ADD_TASK":
         return {
             ...state,
@@ -71,6 +38,58 @@ export function taskReducer(state, action) {
             ...state,
             priorityFilter: action.payload,
         };
+    case "MOVE_TASK": {
+        const { draggedTaskId, targetTaskId = null, targetStatus = null } = action.payload;
+        const draggedIndex = state.tasks.findIndex((task) => task.id === draggedTaskId);
+
+        if (draggedIndex < 0) {
+            return state;
+        }
+
+        const nextTasks = [...state.tasks];
+        const [draggedTask] = nextTasks.splice(draggedIndex, 1);
+        const updatedDraggedTask = targetStatus
+            ? { ...draggedTask, status: targetStatus }
+            : draggedTask;
+
+        if (targetTaskId !== null) {
+            const targetIndex = nextTasks.findIndex((task) => task.id === targetTaskId);
+
+            if (targetIndex < 0) {
+                return {
+                    ...state,
+                    tasks: [...nextTasks, updatedDraggedTask],
+                };
+            }
+
+            nextTasks.splice(targetIndex, 0, updatedDraggedTask);
+            return {
+                ...state,
+                tasks: nextTasks,
+            };
+        }
+
+        if (!targetStatus) {
+            return {
+                ...state,
+                tasks: [...nextTasks, updatedDraggedTask],
+            };
+        }
+
+        let insertIndex = nextTasks.length;
+        for (let i = nextTasks.length - 1; i >= 0; i -= 1) {
+            if (nextTasks[i].status === targetStatus) {
+                insertIndex = i + 1;
+                break;
+            }
+        }
+
+        nextTasks.splice(insertIndex, 0, updatedDraggedTask);
+        return {
+            ...state,
+            tasks: nextTasks,
+        };
+    }
     default:
       return state;
   }

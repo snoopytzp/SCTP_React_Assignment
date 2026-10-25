@@ -1,24 +1,50 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { TaskContext } from "../contexts/TaskContext";
+import { taskApi, toTask } from "../taskApi";
 import Header from "../components/Header";
 import styles from "./TaskDetailPage.module.css";
 import shellStyles from "./PageShell.module.css";
 
 function TaskDetailPage() {
   const { id } = useParams();
-  const { tasks } = useContext(TaskContext);
+  const { tasks, moveTask, pending } = useContext(TaskContext);
+  const [serverTask, setServerTask] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const taskId = Number(id);
-  const task = tasks.find((item) => item.id === taskId);
+  const metadata = tasks.find((item) => item.id === taskId);
+  const task = serverTask ? toTask(serverTask, metadata) : null;
 
-  if (!task) {
+  useEffect(() => {
+    const controller = new AbortController();
+    const loadTask = async () => {
+      setLoading(true);
+      setError("");
+      try {
+        const data = await taskApi.get(id, controller.signal);
+        if (!controller.signal.aborted) setServerTask(data);
+      } catch (err) {
+        if (!controller.signal.aborted) setError(err.message);
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    };
+    loadTask();
+    return () => controller.abort();
+  }, [id]);
+
+  if (loading) return <p role="status">Loading task...</p>;
+
+  if (error || !task) {
     return (
       <div className={shellStyles.page}>
         <Header />
         <main className={shellStyles.content}>
           <div className={styles.panel}>
-            <h2 className={styles.name}>Task not found</h2>
-            <p className={styles.notFoundText}>The requested task does not exist.</p>
+            <h2 className={styles.name}>Unable to load task</h2>
+            <p role="alert" className={styles.notFoundText}>{error || "The requested task does not exist."}</p>
+            <Link to="/tasks">Back to Tasks</Link>
           </div>
         </main>
       </div>
@@ -56,6 +82,19 @@ function TaskDetailPage() {
           </div>
 
           <div className={styles.actions}>
+            {task.status !== "done" ? (
+              <button
+                type="button"
+                className={styles.editButton}
+                disabled={pending}
+                onClick={async () => {
+                  const saved = await moveTask({ draggedTaskId: task.id, targetStatus: "done" });
+                  if (saved) setServerTask((previous) => ({ ...previous, status: "done", completed: true }));
+                }}
+              >
+                Mark complete
+              </button>
+            ) : null}
             <Link to={`/tasks/${id}/edit`} className={styles.editButton}>
               Edit
             </Link>

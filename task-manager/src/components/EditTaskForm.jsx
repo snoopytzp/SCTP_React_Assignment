@@ -1,13 +1,16 @@
-import {useState, useContext} from "react";
+import {useState, useContext, useEffect} from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { TaskContext } from "../contexts/TaskContext";
+import { taskApi, toTask } from "../taskApi";
 import styles from "./EditTaskForm.module.css";
 
 function EditTaskForm() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { tasks, updateTask } = useContext(TaskContext);
+    const { tasks, updateTask, pending } = useContext(TaskContext);
     const fetchedTask = tasks.find((task) => task.id === Number(id));
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
 
     const [form, setForm] = useState({
       title: fetchedTask?.title || "",
@@ -15,6 +18,34 @@ function EditTaskForm() {
       status: fetchedTask?.status || "todo",
       priority: fetchedTask?.priority || "medium"
     });
+
+    useEffect(() => {
+      const controller = new AbortController();
+      const loadTask = async () => {
+        setLoading(true);
+        setError("");
+        try {
+          const task = await taskApi.get(id, controller.signal);
+          if (!controller.signal.aborted) {
+            setForm((previous) => {
+              const loadedTask = toTask(task, previous);
+              return {
+                title: loadedTask.title,
+                description: loadedTask.description || "",
+                status: loadedTask.status,
+                priority: loadedTask.priority,
+              };
+            });
+          }
+        } catch (err) {
+          if (!controller.signal.aborted) setError(err.message);
+        } finally {
+          if (!controller.signal.aborted) setLoading(false);
+        }
+      };
+      loadTask();
+      return () => controller.abort();
+    }, [id]);
 
     const handleChange = (e) => {
         e.preventDefault();
@@ -25,20 +56,23 @@ function EditTaskForm() {
         }));
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const updatedTask = {
             id: Number(id),
             ...form,
         };
-        updateTask(updatedTask);
-        navigate(`/tasks/${id}`);
+        const saved = await updateTask(updatedTask);
+        if (saved) navigate(`/tasks/${id}`);
     }
 
-    if (!fetchedTask) {
+    if (loading) return <p role="status">Loading task...</p>;
+
+    if (error) {
       return (
         <div className={styles.panel}>
-          <h2 className={styles.name}>Task not found</h2>
+          <p role="alert">{error}</p>
+          <Link to="/tasks">Back to Tasks</Link>
         </div>
       );
     }
@@ -110,7 +144,7 @@ function EditTaskForm() {
         </div>
 
         <div className={styles.editActions}>
-          <button type="submit" className={styles.saveButton}>
+          <button type="submit" className={styles.saveButton} disabled={pending}>
             Save
           </button>
           <Link to={`/tasks/${id}`} className={styles.cancelButton}>

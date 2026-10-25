@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import styles from "./AddTaskForm.module.css";
 
 function AddTaskForm({ backTo = "/tasks" }) {
-  const { tasks, addTask } = useContext(TaskContext);
+  const { addTask, pending } = useContext(TaskContext);
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -28,22 +28,18 @@ function AddTaskForm({ backTo = "/tasks" }) {
       return;
     }
 
-    // Autogenerate a primary Id based on the max(Id) + 1
-    const nextId = tasks.length > 0 ? Math.max(...tasks.map((task) => task.id)) + 1 : 1;
-
     const newTask = {
-      id: nextId,
       title: form.title.trim(),
       description: form.description.trim(),
       status: form.status,
       priority: form.priority,
     };
 
-    await addTask(newTask);
-    resetForm();
+    const created = await addTask(newTask);
+    if (created) resetForm();
   };
 
-  const isSubmitDisabled = !form.title.trim() || !form.description.trim();
+  const isSubmitDisabled = pending || !form.title.trim() || !form.description.trim();
 
   return (
     <form className={styles.formRoot} onSubmit={handleSubmit}>
